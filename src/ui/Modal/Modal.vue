@@ -21,7 +21,6 @@ watchEffect(() => {
   if (isOpened.value) {
     modalRef.value?.showModal()
   } else {
-    console.log('@effect-close')
     closeModal()
   }
 })

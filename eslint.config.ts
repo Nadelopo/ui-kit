@@ -12,7 +12,7 @@ import pluginVueScopedCss from 'eslint-plugin-vue-scoped-css' // 👈
 export default defineConfigWithVueTs(
   {
     name: 'app/files-to-lint',
-    files: ['**/*.{ts,mts,tsx,vue}'],
+    files: ['**/*.{ts,mts,tsx,vue}']
   },
 
   globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
@@ -20,15 +20,20 @@ export default defineConfigWithVueTs(
   pluginVue.configs['flat/recommended'],
   vueTsConfigs.recommended,
   skipFormatting,
+  {
+    rules: {
+      'no-console': ['error', { allow: ['warn', 'error'] }]
+    }
+  },
 
   {
     plugins: {
-      'vue-scoped-css': pluginVueScopedCss,
+      'vue-scoped-css': pluginVueScopedCss
     },
     rules: {
       'vue/multi-word-component-names': 'off',
       'vue-scoped-css/enforce-style-type': ['error', { allows: ['module'] }],
-      '@typescript-eslint/ban-ts-comment': 'off',
-    },
-  },
+      '@typescript-eslint/ban-ts-comment': 'off'
+    }
+  }
 )
