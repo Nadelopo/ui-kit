@@ -36,7 +36,7 @@ watch(isOpened, (value) => {
     isModalOpened.value = true
   } else {
     const duration = parseFloat(transitionDurationVariable.value ?? '0') * 1000
-    timeout = setTimeout(() => {
+    timeout = window.setTimeout(() => {
       isModalOpened.value = false
       emit('transitionEnd')
     }, duration)

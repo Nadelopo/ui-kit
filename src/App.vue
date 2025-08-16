@@ -1,7 +1,6 @@
 <script setup vapor lang="ts">
 import { ref } from 'vue'
 import Modal from './ui/Modal/Modal.vue'
-import Test from './Test.vue'
 
 const isOpen = ref(false)
 const isOpen2 = ref(false)
@@ -30,7 +29,6 @@ const isOpen2 = ref(false)
     @transition-end="console.log('transition-end')"
   >
     <template #title> title </template>
-    <Test />
     <div>1</div>
     <button @click="isOpen2 = true">open modal 2</button>
     <button
