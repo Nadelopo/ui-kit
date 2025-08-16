@@ -1,5 +1,5 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
+import storybook from 'eslint-plugin-storybook'
 
 import { globalIgnores } from 'eslint/config'
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
@@ -23,8 +23,17 @@ export default defineConfigWithVueTs(
   pluginVue.configs['flat/recommended'],
   vueTsConfigs.recommended,
   skipFormatting,
+  storybook.configs['flat/recommended'],
+  {
+    ignores: ['!.storybook'],
+    rules: {
+      'storybook/no-unrendered-docs': 'off'
+    }
+  },
   {
     rules: {
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
       'no-console': ['warn', { allow: ['warn', 'error'] }]
     }
   },
@@ -35,8 +44,7 @@ export default defineConfigWithVueTs(
     },
     rules: {
       'vue/multi-word-component-names': 'off',
-      'vue-scoped-css/enforce-style-type': ['error', { allows: ['module'] }],
-      '@typescript-eslint/ban-ts-comment': 'off'
+      'vue-scoped-css/enforce-style-type': ['error', { allows: ['module'] }]
     }
   }
 )
