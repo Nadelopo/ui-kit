@@ -27,17 +27,17 @@ const modalRef = useTemplateRef('modalRef')
 
 const transitionDurationVariable = useCssVar('--transition-duration', modalRef)
 
-const isModalOpened = ref(isOpened.value)
+const isVisible = ref(isOpened.value)
 
 watch(isOpened, (value) => {
   let timeout = 0
 
   if (value) {
-    isModalOpened.value = true
+    isVisible.value = true
   } else {
     const duration = parseFloat(transitionDurationVariable.value ?? '0') * 1000
     timeout = window.setTimeout(() => {
-      isModalOpened.value = false
+      isVisible.value = false
       emit('transitionEnd')
     }, duration)
   }
@@ -71,7 +71,7 @@ createModalContext({
 
 <template>
   <dialog
-    v-if="isModalOpened"
+    v-if="isVisible"
     ref="modalRef"
     :class="[S.modal, fullScreen && S.full_screen]"
     @click.self="closeOnClickOutside && closeModal()"
