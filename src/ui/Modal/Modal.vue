@@ -1,7 +1,16 @@
 <script lang="ts" setup>
-import { useTemplateRef, watchEffect } from 'vue'
-import { useEventListener } from '@vueuse/core'
+import { onWatcherCleanup, ref, useSlots, useTemplateRef, watch, watchEffect } from 'vue'
+import { useCssVar, useEventListener } from '@vueuse/core'
 import { createModalContext } from './useModal'
+
+type ModalProps = {
+  fullScreen?: boolean
+  closeOnClickOutside?: boolean
+}
+
+withDefaults(defineProps<ModalProps>(), {
+  closeOnClickOutside: true
+})
 
 const isOpened = defineModel<boolean>({
   required: true
@@ -9,9 +18,34 @@ const isOpened = defineModel<boolean>({
 
 const emit = defineEmits<{
   close: []
+  transitionEnd: []
 }>()
 
+const slots = useSlots()
+
 const modalRef = useTemplateRef('modalRef')
+
+const transitionDurationVariable = useCssVar('--transition-duration', modalRef)
+
+const isModalOpened = ref(isOpened.value)
+
+watch(isOpened, (value) => {
+  let timeout = 0
+
+  if (value) {
+    isModalOpened.value = true
+  } else {
+    const duration = parseFloat(transitionDurationVariable.value ?? '0') * 1000
+    timeout = setTimeout(() => {
+      isModalOpened.value = false
+      emit('transitionEnd')
+    }, duration)
+  }
+
+  onWatcherCleanup(() => {
+    clearTimeout(timeout)
+  })
+})
 
 const closeModal = () => {
   modalRef.value?.close()
@@ -20,7 +54,7 @@ const closeModal = () => {
 watchEffect(() => {
   if (isOpened.value) {
     modalRef.value?.showModal()
-  } else {
+  } else if (modalRef.value?.open) {
     closeModal()
   }
 })
@@ -37,11 +71,18 @@ createModalContext({
 
 <template>
   <dialog
+    v-if="isModalOpened"
     ref="modalRef"
-    :class="S.modal"
-    @click.self="isOpened = false"
+    :class="[S.modal, fullScreen && S.full_screen]"
+    @click.self="closeOnClickOutside && closeModal()"
   >
-    <div :class="S.modal__content">
+    <div :class="S.content">
+      <h2
+        v-if="slots.title"
+        :class="S.title"
+      >
+        <slot name="title" />
+      </h2>
       <slot />
     </div>
   </dialog>
@@ -49,16 +90,16 @@ createModalContext({
 
 <style module="S">
 .modal {
-  --transition-duration: 0.3s;
+  --transition-duration: var(--modal-transition-duration, 0.3s);
   padding: 0;
 
-  border-radius: var(--border-radius-md);
+  border-radius: var(--modal-border-radius, var(--border-radius-md));
   border: none;
   opacity: 0;
   transition:
-    opacity var(--modal-transition-duration, var(--transition-duration)) ease,
-    overlay var(--modal-transition-duration, var(--transition-duration)) ease allow-discrete,
-    display var(--modal-transition-duration, var(--transition-duration)) ease allow-discrete;
+    opacity var(--transition-duration) ease,
+    overlay var(--transition-duration) ease allow-discrete,
+    display var(--transition-duration) ease allow-discrete;
 
   &[open] {
     opacity: 1;
@@ -73,9 +114,9 @@ createModalContext({
   background-color: transparent;
   backdrop-filter: blur(0);
   transition:
-    background-color var(--modal-transition-duration, var(--transition-duration)) ease,
-    backdrop-filter var(--modal-transition-duration, var(--transition-duration)) ease,
-    display var(--modal-transition-duration, var(--transition-duration)) ease allow-discrete;
+    background-color var(--transition-duration) ease,
+    backdrop-filter var(--transition-duration) ease,
+    display var(--transition-duration) ease allow-discrete;
 }
 
 .modal[open]::backdrop {
@@ -90,7 +131,22 @@ createModalContext({
   }
 }
 
-.modal__content {
-  padding: 20px;
+.content {
+  padding: var(--modal-content-padding, 20px);
+  height: 100%;
+}
+
+.full_screen {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
 }
 </style>
