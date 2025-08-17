@@ -1,10 +1,27 @@
 @use './variables.scss' as *;
 @use './reset.scss' as *;
+@use './typography.scss' as *;
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+}
+
+body {
+  font-family: var(--font-family-primary);
+  font-weight: 400;
 }
 
 button {

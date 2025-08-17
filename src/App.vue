@@ -9,13 +9,13 @@ const isOpen2 = ref(false)
 <template>
   <div style="padding: 20px">
     <button
-      class="btn"
+      :class="S.btn"
       @click="isOpen = true"
     >
-      open modal
+      Button
     </button>
     <button
-      class="btn"
+      :class="S.btn"
       @click="isOpen = false"
     >
       close modal
@@ -25,6 +25,7 @@ const isOpen2 = ref(false)
   <Modal
     v-model="isOpen"
     :class="S.modal"
+    full-screen
     @close="console.log('close1')"
     @transition-end="console.log('transition-end')"
   >
@@ -48,5 +49,11 @@ const isOpen2 = ref(false)
 
 <style module="S">
 .modal {
+}
+
+.btn {
+  font-size: 14px;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
 }
 </style>
