@@ -25,7 +25,6 @@ const isOpen2 = ref(false)
   <Modal
     v-model="isOpen"
     :class="S.modal"
-    full-screen
     @close="console.log('close1')"
     @transition-end="console.log('transition-end')"
   >
@@ -48,9 +47,6 @@ const isOpen2 = ref(false)
 </template>
 
 <style module="S">
-.modal {
-}
-
 .btn {
   font-size: 14px;
   border-radius: 8px;

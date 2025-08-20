@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import { onWatcherCleanup, ref, useSlots, useTemplateRef, watch, watchEffect } from 'vue'
 import { useCssVar, useEventListener } from '@vueuse/core'
+import CloseModal from './CloseModal.vue'
 import { createModalContext } from './useModal'
 
 type ModalProps = {
   fullScreen?: boolean
   closeOnClickOutside?: boolean
+  showCloseButton?: boolean
 }
 
 withDefaults(defineProps<ModalProps>(), {
-  closeOnClickOutside: true
+  closeOnClickOutside: true,
+  showCloseButton: true
 })
 
 const isOpened = defineModel<boolean>({
@@ -77,12 +80,15 @@ createModalContext({
     @click.self="closeOnClickOutside && closeModal()"
   >
     <div :class="S.content">
-      <h2
-        v-if="slots.title"
-        :class="S.title"
-      >
-        <slot name="title" />
-      </h2>
+      <div :class="S.header">
+        <h2
+          v-if="slots.title"
+          :class="S.title"
+        >
+          <slot name="title" />
+        </h2>
+        <CloseModal v-if="showCloseButton" />
+      </div>
       <slot />
     </div>
   </dialog>
@@ -132,7 +138,7 @@ createModalContext({
 }
 
 .content {
-  padding: var(--modal-content-padding, 20px);
+  padding: var(--modal-content-padding, 16px);
   height: 100%;
 }
 
@@ -144,9 +150,15 @@ createModalContext({
   border-radius: 0;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
 .title {
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 16px;
 }
 </style>

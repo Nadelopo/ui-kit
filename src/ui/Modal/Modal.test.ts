@@ -205,6 +205,41 @@ describe('Interactions and Events', () => {
   })
 })
 
+describe('showCloseButton prop', () => {
+  test('renders close button by default and closes modal on click', async () => {
+    const wrapper = mount(Modal, {
+      props: {
+        modelValue: true
+      }
+    })
+
+    await nextTick()
+
+    const closeButton = wrapper.find('button')
+    expect(closeButton.exists()).toBe(true)
+
+    await closeButton.trigger('click')
+
+    expect(wrapper.emitted('close')).toBeTruthy()
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+    expect(wrapper.emitted('update:modelValue')![0]).toEqual([false])
+  })
+
+  test('does not render close button when showCloseButton is false', async () => {
+    const wrapper = mount(Modal, {
+      props: {
+        modelValue: true,
+        showCloseButton: false
+      }
+    })
+
+    await nextTick()
+
+    const closeButton = wrapper.find('button')
+    expect(closeButton.exists()).toBe(false)
+  })
+})
+
 describe('Reactivity and Props', () => {
   test('shows modal when modelValue changes from false to true', async () => {
     const wrapper = mount(Modal, {
