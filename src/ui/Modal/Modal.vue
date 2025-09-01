@@ -1,5 +1,13 @@
 <script lang="ts" setup>
-import { onWatcherCleanup, ref, useSlots, useTemplateRef, watch, watchEffect } from 'vue'
+import {
+  onWatcherCleanup,
+  ref,
+  useSlots,
+  useTemplateRef,
+  watch,
+  watchEffect,
+  type HTMLAttributes
+} from 'vue'
 import { useCssVar, useEventListener } from '@vueuse/core'
 import CloseModal from './CloseModal.vue'
 import { createModalContext } from './useModal'
@@ -8,11 +16,13 @@ type ModalProps = {
   fullScreen?: boolean
   closeOnClickOutside?: boolean
   showCloseButton?: boolean
+  contentClass?: HTMLAttributes['class']
 }
 
 withDefaults(defineProps<ModalProps>(), {
   closeOnClickOutside: true,
-  showCloseButton: true
+  showCloseButton: true,
+  contentClass: ''
 })
 
 const isOpened = defineModel<boolean>({
@@ -79,7 +89,7 @@ createModalContext({
     :class="[S.modal, fullScreen && S.full_screen]"
     @click.self="closeOnClickOutside && closeModal()"
   >
-    <div :class="S.content">
+    <div :class="[S.content, contentClass]">
       <div :class="S.header">
         <h2
           v-if="slots.title"
@@ -138,7 +148,7 @@ createModalContext({
 }
 
 .content {
-  padding: var(--modal-content-padding, 16px);
+  padding: 16px;
   height: 100%;
 }
 
